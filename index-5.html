@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chicago Tri 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --beige: #f4efe6;
+  --beige-mid: #ede5d8;
+  --beige-dark: #e2d8c8;
+  --white: #fdfaf5;
+  --ink: #1a1714;
+  --ink-mid: #56504a;
+  --ink-light: #9a9088;
+  --ink-faint: #c5bdb0;
+  --border: rgba(80,70,60,0.12);
+  --border-mid: rgba(80,70,60,0.2);
+  --str: #7a4a8a; --str-bg: #f2eaf5;
+  --pel: #1a5a6a; --pel-bg: #e6f2f4;
+  --run: #8b3a2a; --run-bg: #f5ebe8;
+  --bike: #3a6b2a; --bike-bg: #eaf2e6;
+  --swim: #2a5a96; --swim-bg: #e6eff8;
+  --rest: #888078; --rest-bg: #f0ece4;
+  --wedding: #c05a7a; --wedding-bg: #faedf2;
+  --race: #c07a2a; --race-bg: #faf2e6;
+  --phase1: #7a4a8a; --phase2: #2a5a96; --phase3: #3a6b2a; --phase4: #c07a2a;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--beige);color:var(--ink);min-height:100vh;font-size:14px;}
+
+/* TOP BAR */
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:0.75rem 1.5rem;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:1rem;position:sticky;top:0;z-index:100;}
+.topbar-left h1{font-family:'Fraunces',serif;font-size:20px;font-weight:400;letter-spacing:-0.02em;color:var(--ink);}
+.topbar-left p{font-size:11px;color:var(--ink-light);margin-top:1px;}
+.topbar-center{display:flex;gap:3px;background:var(--beige);border-radius:8px;padding:3px;justify-self:center;}
+.view-btn{font-size:12px;padding:6px 18px;border-radius:6px;border:none;background:none;color:var(--ink-mid);cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:400;transition:all 0.15s;}
+.view-btn.active{background:var(--white);color:var(--ink);font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,0.08);}
+.topbar-right{display:flex;gap:1.5rem;align-items:center;justify-self:end;}
+.stat{text-align:center;}
+.stat-val{font-family:'Fraunces',serif;font-size:18px;font-weight:300;color:var(--ink);display:block;}
+.stat-lbl{font-size:9px;text-transform:uppercase;letter-spacing:0.07em;color:var(--ink-light);}
+.stat-div{width:1px;height:28px;background:var(--border);}
+
+/* PROGRESS BAR */
+.prog-wrap{background:var(--white);border-bottom:1px solid var(--border);padding:10px 1.5rem 8px;}
+.prog-phases{display:flex;gap:3px;margin-bottom:3px;position:relative;}
+.prog-phase{height:7px;border-radius:3px;position:relative;transition:opacity 0.2s;}
+.prog-marker{position:absolute;top:-4px;width:3px;height:15px;background:var(--ink);border-radius:2px;transform:translateX(-50%);z-index:2;}
+.prog-labels{display:flex;gap:3px;margin-bottom:6px;}
+.prog-label{font-size:8px;color:var(--ink-faint);flex:1;}
+.prog-milestones{position:relative;height:30px;}
+.ms-tick{position:absolute;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;}
+.ms-tick-line{width:1px;height:4px;background:var(--border-mid);}
+.ms-tick-label{font-size:7.5px;color:var(--ink-mid);white-space:nowrap;margin-top:1px;text-align:center;}
+.ms-tick-days{font-size:7px;color:var(--ink-faint);text-align:center;}
+
+/* MAIN LAYOUT */
+.main{max-width:1100px;margin:0 auto;padding:1.25rem 1.5rem 4rem;}
+
+/* MY WEEK VIEW */
+.week-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
+.week-nav-title{font-family:'Fraunces',serif;font-size:18px;font-weight:400;color:var(--ink);}
+.week-nav-sub{font-size:11px;color:var(--ink-light);margin-top:2px;}
+.week-nav-btns{display:flex;gap:6px;align-items:center;}
+.nav-btn{font-size:11px;padding:6px 12px;border-radius:7px;border:1px solid var(--border-mid);background:var(--white);color:var(--ink-mid);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.12s;}
+.nav-btn:hover{background:var(--beige-mid);}
+.plan-btn{font-size:11px;padding:6px 14px;border-radius:7px;border:none;background:var(--str);color:#fff;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;transition:opacity 0.15s;}
+.plan-btn:hover{opacity:0.88;}
+.notes-btn{font-size:11px;padding:6px 12px;border-radius:7px;border:1px solid var(--border-mid);background:var(--white);color:var(--ink-mid);cursor:pointer;font-family:'DM Sans',sans-serif;}
+
+.week-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.col-card{background:var(--white);border-radius:12px;border:1px solid var(--border);overflow:hidden;}
+.col-header{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--beige);}
+.col-title{font-size:11px;font-weight:500;color:var(--ink);text-transform:uppercase;letter-spacing:0.06em;}
+.col-sub{font-size:10px;color:var(--ink-light);}
+.col-body{padding:6px 10px;}
+
+/* DAY ROWS */
+.day-section{padding:5px 0;border-bottom:1px solid var(--border);}
+.day-section:last-child{border-bottom:none;}
+.day-label{font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:0.07em;color:var(--ink-faint);margin-bottom:4px;padding:0 2px;}
+.blocks-row{display:flex;flex-wrap:wrap;gap:4px;min-height:28px;padding:2px;}
+
+/* WORKOUT BLOCKS */
+.block{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;font-size:11px;font-weight:500;cursor:grab;user-select:none;border:1px solid transparent;transition:opacity 0.15s,transform 0.1s;}
+.block:active{cursor:grabbing;transform:scale(0.97);}
+.block.dragging{opacity:0.35;}
+.block.editable{cursor:pointer;}
+.block .block-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.block.str{background:var(--str-bg);color:var(--str);border-color:rgba(122,74,138,0.15);}
+.block.pel{background:var(--pel-bg);color:var(--pel);border-color:rgba(26,90,106,0.15);}
+.block.run{background:var(--run-bg);color:var(--run);border-color:rgba(139,58,42,0.15);}
+.block.bike{background:var(--bike-bg);color:var(--bike);border-color:rgba(58,107,42,0.15);}
+.block.swim{background:var(--swim-bg);color:var(--swim);border-color:rgba(42,90,150,0.15);}
+.block.rest{background:var(--rest-bg);color:var(--rest);}
+.block.empty-slot{background:none;border:1.5px dashed var(--border-mid);color:var(--ink-faint);font-size:10px;font-weight:400;cursor:default;}
+.drop-zone{min-height:34px;border-radius:8px;transition:background 0.15s;}
+.drop-zone.drag-over{background:var(--beige-mid);outline:2px dashed var(--ink-faint);outline-offset:2px;}
+
+/* EDITABLE BLOCK */
+.block-input{font-size:11px;font-weight:500;font-family:'DM Sans',sans-serif;border:none;background:none;outline:none;color:inherit;min-width:60px;width:auto;}
+
+/* CHECK */
+.day-check-row{display:flex;align-items:center;justify-content:flex-end;margin-top:3px;}
+.check-btn{display:flex;align-items:center;gap:4px;background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:10px;color:var(--ink-faint);padding:0;}
+.chkbox{width:14px;height:14px;border-radius:3px;border:1px solid var(--ink-faint);display:flex;align-items:center;justify-content:center;transition:all 0.15s;flex-shrink:0;}
+.chkbox.on{background:var(--bike);border-color:var(--bike);}
+
+/* WEEK NOTES */
+.week-notes-area{width:100%;font-family:'DM Sans',sans-serif;font-size:11px;color:var(--ink-mid);background:var(--beige);border:1px solid var(--border);border-radius:8px;padding:8px 12px;resize:none;outline:none;line-height:1.5;margin-top:0.75rem;min-height:36px;}
+.week-notes-area:focus{border-color:var(--ink-faint);background:var(--white);}
+.week-notes-area::placeholder{color:var(--ink-faint);}
+
+/* SPECIAL BANNERS */
+.special-banner{border-radius:8px;padding:8px 14px;font-size:11px;font-weight:500;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+
+/* FULL PLAN VIEW */
+.full-plan{display:flex;flex-direction:column;gap:5px;}
+.fp-week{background:var(--white);border-radius:10px;border:1px solid var(--border);overflow:hidden;}
+.fp-week.fp-current{border:2px solid var(--str);}
+.fp-week.fp-done{opacity:0.55;}
+.fp-toggle{width:100%;background:none;border:none;padding:11px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;font-family:'DM Sans',sans-serif;text-align:left;transition:background 0.12s;}
+.fp-toggle:hover{background:var(--beige);}
+.fp-num{font-family:'Fraunces',serif;font-size:12px;color:var(--ink-light);width:22px;flex-shrink:0;}
+.fp-name{font-size:13px;font-weight:500;color:var(--ink);flex:1;}
+.fp-dates{font-size:11px;color:var(--ink-light);}
+.fp-badge{font-size:9px;padding:3px 10px;border-radius:20px;font-weight:500;flex-shrink:0;}
+.fp-prog{font-size:10px;color:var(--ink-light);white-space:nowrap;flex-shrink:0;}
+.fp-chevron{font-size:12px;color:var(--ink-faint);transition:transform 0.2s;flex-shrink:0;}
+.fp-chevron.open{transform:rotate(180deg);}
+.fp-body{display:none;padding:0 16px 12px;border-top:1px solid var(--border);}
+.fp-body.open{display:block;}
+.fp-day-row{display:grid;grid-template-columns:32px 1fr;gap:8px;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);}
+.fp-day-row:last-child{border-bottom:none;}
+.fp-day-lbl{font-size:10px;font-weight:500;color:var(--ink-faint);}
+.fp-day-blocks{display:flex;flex-wrap:wrap;gap:4px;}
+.fp-note{font-size:10px;color:var(--ink-light);font-style:italic;margin-top:6px;}
+.fp-down-notice{font-size:10px;color:var(--ink-mid);background:var(--beige);border-radius:6px;padding:5px 10px;margin-bottom:8px;margin-top:8px;}
+
+/* RESPONSIVE */
+@media(max-width:680px){
+  .week-cols{grid-template-columns:1fr;}
+  .topbar-right{display:none;}
+  .main{padding:1rem 0.75rem 4rem;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <h1>Chicago Triathlon 2026</h1>
+    <p>Olympic · 1.5km swim · 40km bike · 10km run</p>
+  </div>
+  <div class="topbar-center">
+    <button class="view-btn active" onclick="setView('week')">My week</button>
+    <button class="view-btn" onclick="setView('plan')">Full plan</button>
+  </div>
+  <div class="topbar-right">
+    <div class="stat"><span class="stat-val" id="days-left">—</span><span class="stat-lbl">days to race</span></div>
+    <div class="stat-div"></div>
+    <div class="stat"><span class="stat-val" id="total-done">0</span><span class="stat-lbl">done</span></div>
+    <div class="stat-div"></div>
+    <div class="stat"><span class="stat-val" id="pct-done">0%</span><span class="stat-lbl">complete</span></div>
+  </div>
+</div>
+
+<div class="prog-wrap">
+  <div class="prog-phases" id="prog-phases">
+    <div class="prog-phase" style="flex:8;background:var(--phase1);opacity:0.75" id="ph1-bar"></div>
+    <div class="prog-phase" style="flex:5;background:var(--phase2);opacity:0.3"></div>
+    <div class="prog-phase" style="flex:5;background:var(--phase3);opacity:0.3"></div>
+    <div class="prog-phase" style="flex:3;background:var(--phase4);opacity:0.3"></div>
+  </div>
+  <div class="prog-labels">
+    <div class="prog-label" style="flex:8;color:var(--phase1)">Wedding prep · Wk 1–8</div>
+    <div class="prog-label" style="flex:5;color:var(--phase2)">Base building · Wk 9–13</div>
+    <div class="prog-label" style="flex:5;color:var(--phase3)">Tri build · Wk 14–18</div>
+    <div class="prog-label" style="flex:3;color:var(--phase4)">Taper · Wk 19–21</div>
+  </div>
+  <div class="prog-milestones" id="prog-milestones"></div>
+</div>
+
+<div class="main">
+  <div id="view-week"></div>
+  <div id="view-plan" style="display:none"></div>
+</div>
+
+<script>
+const RACE_DATE = new Date(2026,7,23);
+const PLAN_START = new Date(2026,2,30);
+const DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const STORAGE_KEY = 'chi-tri-2026-v4';
+
+const BLOCK_TYPES = {
+  'str-lower':  {label:'Strength — Lower', cls:'str', dot:'#7a4a8a'},
+  'str-upper':  {label:'Strength — Upper', cls:'str', dot:'#7a4a8a'},
+  'str-full':   {label:'Strength — Full',  cls:'str', dot:'#7a4a8a'},
+  'peloton':    {label:'Cardio — Peloton', cls:'pel', dot:'#1a5a6a'},
+  'run':        {label:'Cardio — Run',     cls:'run', dot:'#8b3a2a'},
+  'bike':       {label:'Cardio — Bike',    cls:'bike',dot:'#3a6b2a'},
+  'swim':       {label:'Swim',             cls:'swim',dot:'#2a5a96'},
+  'rest':       {label:'Rest',             cls:'rest',dot:'#888078'},
+  'custom':     {label:'',                 cls:'pel', dot:'#1a5a6a'},
+};
+
+function typeFromLabel(label) {
+  for(const [k,v] of Object.entries(BLOCK_TYPES)) if(v.label===label) return k;
+  return 'custom';
+}
+
+function addDays(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r;}
+function fmtDate(d){return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});}
+function daysBetween(a,b){return Math.ceil((b-a)/86400000);}
+
+// ─── PLAN DATA ───────────────────────────────────────────────────────────────
+const WEEKS = [
+  {name:'Foundation',phase:1,down:false,special:null,days:[
+    [{t:'str-lower'},{t:'peloton',note:'30 min moderate'}],
+    [{t:'str-upper'},{t:'run',note:'20 min easy'}],
+    [{t:'str-full'}],
+    [{t:'str-lower'},{t:'peloton',note:'45 min'}],
+    [{t:'str-upper'},{t:'run',note:'20 min easy'}],
+    [{t:'str-full'}],
+    [{t:'rest'}],
+  ]},
+  {name:'Building rhythm',phase:1,down:false,special:null,days:[
+    [{t:'str-lower'},{t:'peloton',note:'30 min'}],
+    [{t:'str-upper'},{t:'run',note:'22 min easy'}],
+    [{t:'str-full'}],
+    [{t:'str-lower'},{t:'peloton',note:'45 min'}],
+    [{t:'str-upper'},{t:'run',note:'22 min easy'}],
+    [{t:'str-full'}],
+    [{t:'rest'}],
+  ]},
+  {name:'Cardio builds',phase:1,down:false,special:null,days:[
+    [{t:'str-lower'},{t:'peloton',note:'30 min'}],
+    [{t:'str-upper'},{t:'run',note:'25 min easy'}],
+    [{t:'str-full'}],
+    [{t:'str-lower'},{t:'peloton',note:'45 min'}],
+    [{t:'str-upper'},{t:'run',note:'25 min easy'}],
+    [{t:'str-full'}],
+    [{t:'rest'}],
+  ]},
+  {name:'Down week',phase:1,down:true,special:null,days:[
+    [{t:'str-lower'},{t:'peloton',note:'30 min easy'}],
+    [{t:'str-upper'},{t:'run',note:'20 min easy'}],
+    [{t:'str-full'}],
+    [{t:'str-lower'}],
+    [{t:'str-upper'},{t:'run',note:'20 min easy'}],
+    [{t:'str-full'}],
+    [{t:'rest'}],
+  ]},
+  {name:'Outdoor riding starts',phase:1,down:false,special:null,days:[
+    [{t:'str-lower'},{t:'bike',note:'30 min outdoor'}],
+    [{t:'str-upper'},{t:'run',note:'27 min easy'}],
+    [{t:'str-full'}],
+    [{t:'str-lower'},{t:'peloton',note:'45 min'}],
+    [{t:'str-upper'},{t:'run',note:'27 min easy'}],
+    [{t:'str-full'}],
+    [{t:'rest'}],
+  ]},
+  {name:'Consistency',phase:1,down:false,special:null,days:[
+    [{t:'str-lower'},{t:'bike',note:'35 min outdoor'}],
+    [{t:'str-upper'},{t:'run',note:'28 min easy'}],
+    [{t:'str-full'}],
+    [{t:'str-lower'},{t:'peloton',note:'45 min'}],
+    [{t:'str-upper'},{t:'run',note:'28 min easy'}],
+    [{t:'str-full'}],
+    [{t:'rest'}],
+  ]},
+  {name:'Peak pre-wedding',phase:1,down:false,special:null,days:[
+    [{t:'str-lower'},{t:'bike',note:'40 min outdoor'}],
+    [{t:'str-upper'},{t:'run',note:'30 min easy'}],
+    [{t:'str-full'}],
+    [{t:'str-lower'},{t:'peloton',note:'45 min'}],
+    [{t:'str-upper'},{t:'run',note:'30 min easy'}],
+    [{t:'str-full'}],
+    [{t:'rest'}],
+  ]},
+  {name:'Wedding week',phase:1,down:false,special:'wedding',days:[
+    [{t:'str-lower'}],
+    [{t:'str-upper'}],
+    [{t:'str-full'}],
+    [{t:'str-lower'}],
+    [{t:'rest',note:'💍 Wedding day'}],
+    [{t:'rest'}],
+    [{t:'rest'}],
+  ]},
+  {name:'Post-wedding reset',phase:2,down:false,special:null,days:[
+    [{t:'str-lower'},{t:'bike',note:'40 min easy'}],
+    [{t:'str-upper'},{t:'run',note:'25 min easy'}],
+    [{t:'str-full'},{t:'swim',note:'~400m drills'}],
+    [{t:'str-lower'}],
+    [{t:'str-upper'},{t:'run',note:'28 min easy'}],
+    [{t:'bike',note:'45 min'},{t:'run',note:'10 min brick'}],
+    [{t:'rest'}],
+  ]},
+  {name:'Swim technique',phase:2,down:false,special:null,days:[
+    [{t:'str-lower'},{t:'bike',note:'45 min'}],
+    [{t:'str-upper'},{t:'run',note:'30 min easy'}],
+    [{t:'str-full'},{t:'swim',note:'~500m'}],
+    [{t:'str-lower'}],
+    [{t:'str-upper'},{t:'run',note:'30 min easy'}],
+    [{t:'bike',note:'50 min'},{t:'run',note:'12 min brick'}],
+    [{t:'rest'}],
+  ]},
+  {name:'Down week',phase:2,down:true,special:null,days:[
+    [{t:'str-lower'},{t:'bike',note:'30 min easy'}],
+    [{t:'str-upper'},{t:'run',note:'22 min easy'}],
+    [{t:'str-full'},{t:'swim',note:'~400m easy'}],
+    [{t:'str-lower'}],
+    [{t:'str-upper'},{t:'run',note:'22 min easy'}],
+    [{t:'str-full'}],
+    [{t:'rest'}],
+  ]},
+  {name:'Swim builds',phase:2,down:false,special:null,days:[
+    [{t:'str-lower'},{t:'bike',note:'50 min'}],
+    [{t:'str-upper'},{t:'run',note:'32 min easy'}],
+    [{t:'str-full'},{t:'swim',note:'~650m'}],
+    [{t:'str-lower'}],
+    [{t:'str-upper'},{t:'run',note:'32 min easy'}],
+    [{t:'bike',note:'55 min'},{t:'run',note:'15 min brick'}],
+    [{t:'rest'}],
+  ]},
+  {name:'Swim in wetsuit',phase:2,down:false,special:null,days:[
+    [{t:'str-lower'},{t:'bike',note:'55 min'}],
+    [{t:'str-upper'},{t:'run',note:'35 min easy'}],
+    [{t:'str-full'},{t:'swim',note:'~700m in wetsuit'}],
+    [{t:'str-lower'}],
+    [{t:'str-upper'},{t:'run',note:'35 min easy'}],
+    [{t:'bike',note:'60 min'},{t:'run',note:'15 min brick'}],
+    [{t:'rest'}],
+  ]},
+  {name:'All three disciplines',phase:3,down:false,special:null,days:[
+    [{t:'str-lower'},{t:'bike',note:'50 min'}],
+    [{t:'str-upper'},{t:'run',note:'35 min easy'}],
+    [{t:'swim',note:'~900m pool'}],
+    [{t:'str-lower'}],
+    [{t:'str-upper'},{t:'run',note:'40 min (~6km)'}],
+    [{t:'bike',note:'35km'},{t:'run',note:'3km brick'}],
+    [{t:'rest'}],
+  ]},
+  {name:'Building race distance',phase:3,down:false,special:null,days:[
+    [{t:'str-lower'},{t:'bike',note:'55 min'}],
+    [{t:'str-upper'},{t:'run',note:'40 min easy'}],
+    [{t:'swim',note:'~1100m pool/OW'}],
+    [{t:'str-lower'}],
+    [{t:'str-upper'},{t:'run',note:'45 min (~7km)'}],
+    [{t:'bike',note:'38km'},{t:'run',note:'4km brick'}],
+    [{t:'rest'}],
+  ]},
+  {name:'Down week',phase:3,down:true,special:null,days:[
+    [{t:'str-lower'},{t:'bike',note:'40 min easy'}],
+    [{t:'str-upper'},{t:'run',note:'30 min easy'}],
+    [{t:'swim',note:'~700m easy'}],
+    [{t:'str-lower'}],
+    [{t:'str-upper'},{t:'run',note:'30 min easy'}],
+    [{t:'str-full'}],
+    [{t:'rest'}],
+  ]},
+  {name:'Open water confidence',phase:3,down:false,special:null,days:[
+    [{t:'str-lower'},{t:'bike',note:'60 min'}],
+    [{t:'str-upper'},{t:'run',note:'45 min (~7km)'}],
+    [{t:'swim',note:'~1200m open water'}],
+    [{t:'str-lower'}],
+    [{t:'str-upper'},{t:'run',note:'50 min (~8km) peak!'}],
+    [{t:'bike',note:'40km'},{t:'run',note:'5km brick'}],
+    [{t:'rest'}],
+  ]},
+  {name:'Peak week',phase:3,down:false,special:null,days:[
+    [{t:'str-lower'},{t:'bike',note:'60 min'}],
+    [{t:'str-upper'},{t:'run',note:'45 min easy'}],
+    [{t:'swim',note:'~1400m open water'}],
+    [{t:'str-lower'}],
+    [{t:'str-upper'},{t:'run',note:'45 min easy'}],
+    [{t:'bike',note:'40km'},{t:'run',note:'5km brick'}],
+    [{t:'rest'}],
+  ]},
+  {name:'Taper begins',phase:4,down:false,special:'taper',days:[
+    [{t:'str-lower'},{t:'bike',note:'45 min easy'}],
+    [{t:'str-upper'},{t:'run',note:'35 min easy'}],
+    [{t:'swim',note:'~800m pool'}],
+    [{t:'str-lower'}],
+    [{t:'str-upper'},{t:'run',note:'30 min easy'}],
+    [{t:'bike',note:'30km'},{t:'run',note:'3km brick'}],
+    [{t:'rest'}],
+  ]},
+  {name:'Sharpening',phase:4,down:false,special:null,days:[
+    [{t:'str-lower'},{t:'bike',note:'35 min easy'}],
+    [{t:'str-upper'},{t:'run',note:'25 min easy'}],
+    [{t:'swim',note:'~600m open water — last OW!'}],
+    [{t:'str-lower'}],
+    [{t:'str-upper'},{t:'run',note:'20 min strides'}],
+    [{t:'str-full'}],
+    [{t:'rest'}],
+  ]},
+  {name:'Race week',phase:4,down:false,special:'race',days:[
+    [{t:'str-lower'},{t:'run',note:'20 min easy'}],
+    [{t:'str-upper'},{t:'peloton',note:'20 min easy'}],
+    [{t:'swim',note:'~400m easy'}],
+    [{t:'rest'}],
+    [{t:'rest',note:'bike check-in + packet pickup'}],
+    [{t:'rest',note:'kit out, early bedtime'}],
+    [{t:'rest',note:'🏅 RACE DAY — Aug 23!'}],
+  ]},
+];
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let state = [];
+let currentWeek = 0;
+let currentView = 'week';
+let dragBlock = null;
+let dragSource = null;
+
+function buildState() {
+  let ws = new Date(PLAN_START);
+  WEEKS.forEach((wk,wi) => {
+    state.push({
+      location: 'Chicago',
+      notes: '',
+      fpOpen: wi === currentWeek,
+      actualDays: wk.days.map((_,di) => ({ blocks:[], done:false, date: new Date(addDays(ws,di)) })),
+      weekStart: new Date(ws),
+    });
+    ws = addDays(ws,7);
+  });
+}
+
+function findCurrentWeek() {
+  const today = new Date();
+  for(let wi=0;wi<state.length;wi++){
+    const ws = state[wi].weekStart;
+    const we = addDays(ws,6);
+    if(today>=ws && today<=we) return wi;
+  }
+  return 0;
+}
+
+function recLabel(block) {
+  const bt = BLOCK_TYPES[block.t] || BLOCK_TYPES.custom;
+  return block.note ? `${bt.label}${block.note ? ' · '+block.note : ''}` : bt.label;
+}
+
+function blockCls(t) {
+  return (BLOCK_TYPES[t]||BLOCK_TYPES.custom).cls;
+}
+function blockDot(t) {
+  return (BLOCK_TYPES[t]||BLOCK_TYPES.custom).dot;
+}
+
+// ─── PROGRESS BAR ────────────────────────────────────────────────────────────
+function renderProgress() {
+  const today = new Date();
+  const totalDays = daysBetween(PLAN_START, RACE_DATE);
+  const elapsed = Math.max(0, Math.min(totalDays, daysBetween(PLAN_START, today)));
+  const pct = elapsed / totalDays * 100;
+
+  const ph1 = document.getElementById('ph1-bar');
+  const marker = document.createElement('div');
+  marker.className = 'prog-marker';
+  marker.style.left = pct + '%';
+  document.getElementById('prog-phases').appendChild(marker);
+
+  const milestones = [
+    {label:'💍 Wedding', date: new Date(2026,4,22)},
+    {label:'🏊 Pool swim', date: new Date(2026,4,25)},
+    {label:'🌊 Open water', date: new Date(2026,6,12)},
+    {label:'📉 Taper', date: new Date(2026,7,3)},
+    {label:'🏅 Race', date: new Date(2026,7,23)},
+  ];
+  const container = document.getElementById('prog-milestones');
+  milestones.forEach(m => {
+    const d = daysBetween(PLAN_START, m.date);
+    const left = Math.min(98, d / totalDays * 100);
+    const daysLeft = daysBetween(today, m.date);
+    const tick = document.createElement('div');
+    tick.className = 'ms-tick';
+    tick.style.left = left + '%';
+    tick.innerHTML = `<div class="ms-tick-line"></div><div class="ms-tick-label">${m.label}</div><div class="ms-tick-days">${Math.max(0,daysLeft)}d</div>`;
+    container.appendChild(tick);
+  });
+
+  const diff = daysBetween(today, RACE_DATE);
+  document.getElementById('days-left').textContent = Math.max(0,diff);
+}
+
+function updateHeaderStats() {
+  let done=0, total=0;
+  state.forEach(w => w.actualDays.forEach(d => {
+    if(d.blocks.length>0) { total++; if(d.done) done++; }
+  }));
+  document.getElementById('total-done').textContent = done;
+  document.getElementById('pct-done').textContent = total ? Math.round(done/total*100)+'%' : '0%';
+}
+
+// ─── MY WEEK VIEW ────────────────────────────────────────────────────────────
+function renderWeekView() {
+  const container = document.getElementById('view-week');
+  const wk = WEEKS[currentWeek];
+  const st = state[currentWeek];
+  const ws = st.weekStart;
+  const we = addDays(ws,6);
+  const ph = phaseInfo(wk.phase);
+
+  let html = `
+  <div class="week-nav">
+    <div>
+      <div class="week-nav-title">Week ${currentWeek+1} — ${wk.name}</div>
+      <div class="week-nav-sub">${fmtDate(ws)} – ${fmtDate(we)} · <span style="color:${ph.color}">${ph.label}</span></div>
+    </div>
+    <div class="week-nav-btns">
+      <input class="notes-btn" style="font-size:11px;padding:6px 10px;border-radius:7px;border:1px solid var(--border-mid);background:var(--white);color:var(--ink-mid);font-family:'DM Sans',sans-serif;width:180px;outline:none;" placeholder="Week notes / location…" value="${escHtml(st.notes)}" oninput="state[${currentWeek}].notes=this.value;save()">
+      ${currentWeek>0?`<button class="nav-btn" onclick="goWeek(${currentWeek-1})">← prev</button>`:''}
+      <button class="plan-btn" onclick="planWeek()">Plan week</button>
+      ${currentWeek<WEEKS.length-1?`<button class="nav-btn" onclick="goWeek(${currentWeek+1})">next →</button>`:''}
+    </div>
+  </div>`;
+
+  if(wk.special==='wedding') html+=`<div class="special-banner" style="background:var(--wedding-bg);color:var(--wedding)">💍 Wedding week — strength only, no cardio. Look and feel your best.</div>`;
+  if(wk.special==='taper')   html+=`<div class="special-banner" style="background:var(--race-bg);color:var(--race)">📉 Taper begins. Trust your training. Volume drops, sharpness stays.</div>`;
+  if(wk.special==='race')    html+=`<div class="special-banner" style="background:var(--race-bg);color:var(--race)">🏅 Race week. Rest, eat, hydrate. You are ready.</div>`;
+  if(wk.down)                html+=`<div class="special-banner" style="background:var(--beige-mid);color:var(--ink-mid)">↓ Recovery week — reduce cardio volume ~30%. Keep strength as normal.</div>`;
+
+  html += `<div class="week-cols">`;
+
+  // LEFT — recommended
+  html += `<div class="col-card">
+    <div class="col-header"><div class="col-title">Recommended</div><div class="col-sub">drag blocks into your week →</div></div>
+    <div class="col-body" id="rec-col">`;
+  wk.days.forEach((dayBlocks, di) => {
+    html += `<div class="day-section"><div class="day-label">${DAYS[di]}</div><div class="blocks-row" id="rec-day-${di}">`;
+    dayBlocks.forEach((block, bi) => {
+      const bt = BLOCK_TYPES[block.t] || BLOCK_TYPES.custom;
+      const label = block.note ? `${bt.label} · ${block.note}` : bt.label;
+      html += `<div class="block ${bt.cls}" draggable="true" 
+        ondragstart="onRecDragStart(event,${di},${bi})"
+        ondragend="onDragEnd(event)">
+        <div class="block-dot" style="background:${bt.dot}"></div>${escHtml(label)}</div>`;
+    });
+    html += `</div></div>`;
+  });
+  html += `</div></div>`;
+
+  // RIGHT — actual week
+  html += `<div class="col-card">
+    <div class="col-header"><div class="col-title">My week</div><div class="col-sub">drag to rearrange · click text to edit</div></div>
+    <div class="col-body" id="actual-col">`;
+  st.actualDays.forEach((day, di) => {
+    html += `<div class="day-section">
+      <div class="day-label">${DAYS[di]} <span style="font-weight:300;color:var(--ink-faint)">${fmtDate(day.date)}</span></div>
+      <div class="blocks-row drop-zone" id="actual-day-${di}"
+        ondragover="onActualDragOver(event,${di})"
+        ondragleave="onDragLeave(event)"
+        ondrop="onActualDrop(event,${di})">`;
+    if(day.blocks.length===0) {
+      html += `<div class="block empty-slot">drop workouts here</div>`;
+    } else {
+      day.blocks.forEach((block, bi) => {
+        const bt = BLOCK_TYPES[block.t] || BLOCK_TYPES.custom;
+        html += `<div class="block ${bt.cls} editable" draggable="true"
+          ondragstart="onActualBlockDragStart(event,${di},${bi})"
+          ondragend="onDragEnd(event)"
+          ondblclick="removeBlock(${di},${bi})">
+          <div class="block-dot" style="background:${bt.dot}"></div>
+          <span contenteditable="true" spellcheck="false"
+            class="block-input"
+            onblur="onBlockEdit(event,${di},${bi})"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}"
+            onclick="event.stopPropagation()">${escHtml(block.label)}</span>
+        </div>`;
+      });
+    }
+    html += `</div>`;
+    if(day.blocks.length>0) {
+      html += `<div class="day-check-row">
+        <button class="check-btn" onclick="toggleDone(${di})">
+          <div class="chkbox ${day.done?'on':''}">
+            ${day.done?`<svg width="8" height="7" viewBox="0 0 10 9"><path d="M1.5 4.5l2.5 2.5L8.5 1.5" stroke="white" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`:''}
+          </div>
+          <span>${day.done?'Done!':'Mark done'}</span>
+        </button>
+      </div>`;
+    }
+    html += `</div>`;
+  });
+  html += `</div></div></div>`;
+  html += `<div style="font-size:10px;color:var(--ink-faint);text-align:center;margin-top:0.5rem;">Double-click a block to remove it</div>`;
+
+  container.innerHTML = html;
+}
+
+// ─── PLAN WEEK ───────────────────────────────────────────────────────────────
+function planWeek() {
+  const wk = WEEKS[currentWeek];
+  const st = state[currentWeek];
+  // Prefill from recommended if actual is empty
+  let anyFilled = st.actualDays.some(d => d.blocks.length > 0);
+  if(!anyFilled) {
+    wk.days.forEach((dayBlocks, di) => {
+      st.actualDays[di].blocks = dayBlocks.map(b => {
+        const bt = BLOCK_TYPES[b.t]||BLOCK_TYPES.custom;
+        return {t:b.t, label: b.note ? `${bt.label} · ${b.note}` : bt.label};
+      });
+    });
+    save();
+    renderWeekView();
+  } else {
+    // Already has content — just focus
+    alert('Your week is already planned! Drag blocks to adjust, or double-click to remove.');
+  }
+}
+
+// ─── DRAG AND DROP ───────────────────────────────────────────────────────────
+let recDragData = null;
+let actualDragData = null;
+
+function onRecDragStart(e, di, bi) {
+  const block = WEEKS[currentWeek].days[di][bi];
+  const bt = BLOCK_TYPES[block.t]||BLOCK_TYPES.custom;
+  recDragData = {t: block.t, label: block.note ? `${bt.label} · ${block.note}` : bt.label};
+  actualDragData = null;
+  e.dataTransfer.effectAllowed = 'copy';
+  e.currentTarget.classList.add('dragging');
+}
+
+function onActualBlockDragStart(e, di, bi) {
+  actualDragData = {fromDay: di, fromIdx: bi};
+  recDragData = null;
+  e.dataTransfer.effectAllowed = 'move';
+  e.currentTarget.classList.add('dragging');
+  e.stopPropagation();
+}
+
+function onActualDragOver(e, di) {
+  e.preventDefault();
+  e.currentTarget.classList.add('drag-over');
+}
+function onDragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
+function onDragEnd(e) { e.currentTarget.classList.remove('dragging'); }
+
+function onActualDrop(e, toDi) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  const st = state[currentWeek];
+
+  if(recDragData) {
+    // Dropping from recommended → add to day
+    st.actualDays[toDi].blocks.push({t: recDragData.t, label: recDragData.label});
+    recDragData = null;
+  } else if(actualDragData) {
+    // Moving within actual week
+    const {fromDay, fromIdx} = actualDragData;
+    if(fromDay === toDi) { actualDragData=null; return; }
+    const block = st.actualDays[fromDay].blocks.splice(fromIdx,1)[0];
+    st.actualDays[toDi].blocks.push(block);
+    actualDragData = null;
+  }
+  save();
+  renderWeekView();
+  updateHeaderStats();
+}
+
+function removeBlock(di, bi) {
+  state[currentWeek].actualDays[di].blocks.splice(bi,1);
+  if(state[currentWeek].actualDays[di].blocks.length===0) {
+    state[currentWeek].actualDays[di].done = false;
+  }
+  save();
+  renderWeekView();
+  updateHeaderStats();
+}
+
+function onBlockEdit(e, di, bi) {
+  const newLabel = e.currentTarget.textContent.trim();
+  if(newLabel) {
+    state[currentWeek].actualDays[di].blocks[bi].label = newLabel;
+    state[currentWeek].actualDays[di].blocks[bi].t = typeFromLabel(newLabel);
+  }
+  save();
+}
+
+function toggleDone(di) {
+  state[currentWeek].actualDays[di].done = !state[currentWeek].actualDays[di].done;
+  save();
+  renderWeekView();
+  updateHeaderStats();
+}
+
+function goWeek(wi) {
+  currentWeek = wi;
+  renderWeekView();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ─── FULL PLAN VIEW ──────────────────────────────────────────────────────────
+function renderPlanView() {
+  const container = document.getElementById('view-plan');
+  let html = `<div class="full-plan">`;
+  WEEKS.forEach((wk, wi) => {
+    const st = state[wi];
+    const ws = st.weekStart;
+    const we = addDays(ws,6);
+    const ph = phaseInfo(wk.phase);
+    const doneCount = st.actualDays.filter(d=>d.done).length;
+    const totalCount = st.actualDays.filter(d=>d.blocks.length>0).length;
+    const isDone = wi < currentWeek;
+    const isCurrent = wi === currentWeek;
+    const isOpen = st.fpOpen;
+
+    let badgeStyle = `background:${ph.bg};color:${ph.color}`;
+    let badgeLabel = ph.label;
+    if(wk.special==='wedding') { badgeStyle=`background:var(--wedding-bg);color:var(--wedding)`; badgeLabel='💍 Wedding'; }
+    if(wk.special==='race')    { badgeStyle=`background:var(--race-bg);color:var(--race)`;        badgeLabel='🏅 Race day'; }
+    if(wk.down) badgeLabel += ' ↓';
+
+    const progStr = totalCount>0 ? `${doneCount}/${totalCount}` : isDone ? '—' : '0/0';
+
+    html += `<div class="fp-week ${isDone?'fp-done':''} ${isCurrent?'fp-current':''}">
+      <button class="fp-toggle" onclick="toggleFpWeek(${wi})">
+        <div class="fp-num">${String(wi+1).padStart(2,'0')}</div>
+        <div class="fp-name">${wk.name}</div>
+        <div class="fp-dates">${fmtDate(ws)} – ${fmtDate(we)}</div>
+        <div class="fp-badge" style="${badgeStyle}">${badgeLabel}</div>
+        <div class="fp-prog">${progStr}</div>
+        <div class="fp-chevron ${isOpen?'open':''}">▾</div>
+      </button>
+      <div class="fp-body ${isOpen?'open':''}">`;
+
+    if(wk.down) html+=`<div class="fp-down-notice">↓ Recovery week — reduce cardio ~30%. Keep strength as normal.</div>`;
+
+    wk.days.forEach((dayBlocks, di) => {
+      html += `<div class="fp-day-row">
+        <div class="fp-day-lbl">${DAYS[di]}</div>
+        <div class="fp-day-blocks">`;
+      dayBlocks.forEach(block => {
+        const bt = BLOCK_TYPES[block.t]||BLOCK_TYPES.custom;
+        const label = block.note ? `${bt.label} · ${block.note}` : bt.label;
+        html += `<div class="block ${bt.cls}" style="cursor:default">${label}</div>`;
+      });
+      html += `</div></div>`;
+    });
+
+    if(st.notes) html += `<div class="fp-note">${escHtml(st.notes)}</div>`;
+    html += `<div style="text-align:right;margin-top:8px;"><button class="nav-btn" onclick="goWeekFromPlan(${wi})">Go to this week →</button></div>`;
+    html += `</div></div>`;
+  });
+  html += `</div>`;
+  container.innerHTML = html;
+}
+
+function toggleFpWeek(wi) {
+  state[wi].fpOpen = !state[wi].fpOpen;
+  renderPlanView();
+}
+
+function goWeekFromPlan(wi) {
+  currentWeek = wi;
+  setView('week');
+}
+
+// ─── VIEW SWITCHING ──────────────────────────────────────────────────────────
+function setView(v) {
+  currentView = v;
+  document.getElementById('view-week').style.display = v==='week' ? 'block' : 'none';
+  document.getElementById('view-plan').style.display = v==='plan' ? 'block' : 'none';
+  document.querySelectorAll('.view-btn').forEach((b,i) => {
+    b.classList.toggle('active', (i===0&&v==='week')||(i===1&&v==='plan'));
+  });
+  if(v==='week') renderWeekView();
+  else renderPlanView();
+}
+
+// ─── UTILS ───────────────────────────────────────────────────────────────────
+function phaseInfo(p) {
+  return [
+    {},{label:'Wedding prep',color:'var(--phase1)',bg:'var(--str-bg)'},
+    {label:'Base building',color:'var(--phase2)',bg:'var(--swim-bg)'},
+    {label:'Tri build',color:'var(--phase3)',bg:'var(--bike-bg)'},
+    {label:'Taper',color:'var(--phase4)',bg:'var(--race-bg)'},
+  ][p];
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ─── PERSISTENCE ─────────────────────────────────────────────────────────────
+function save() {
+  try {
+    const data = state.map(w => ({
+      location: w.location,
+      notes: w.notes,
+      fpOpen: w.fpOpen,
+      actualDays: w.actualDays.map(d => ({done:d.done, blocks:d.blocks}))
+    }));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch(e){}
+}
+
+function load() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return;
+    const data = JSON.parse(raw);
+    data.forEach((w,wi) => {
+      if(!state[wi]) return;
+      state[wi].location = w.location || 'Chicago';
+      state[wi].notes = w.notes || '';
+      state[wi].fpOpen = w.fpOpen ?? (wi===currentWeek);
+      if(w.actualDays) w.actualDays.forEach((d,di) => {
+        if(!state[wi].actualDays[di]) return;
+        state[wi].actualDays[di].done = d.done || false;
+        state[wi].actualDays[di].blocks = d.blocks || [];
+      });
+    });
+  } catch(e){}
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+buildState();
+currentWeek = findCurrentWeek();
+load();
+renderProgress();
+renderWeekView();
+updateHeaderStats();
+</script>
+</body>
+</html>
